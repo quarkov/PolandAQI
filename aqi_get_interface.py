@@ -6,10 +6,21 @@ stations_token = "http://api.gios.gov.pl/pjp-api/rest/station/findAll"
 sensors_token = "http://api.gios.gov.pl/pjp-api/rest/station/sensors/"
 magnitudes_token = "http://api.gios.gov.pl/pjp-api/rest/data/getData/"
 
-all_stations = requests.get(stations_token).json()
+
+def get_all_stations():
+    return requests.get(stations_token).json()
+
+
+def get_city_names():
+    all_stations = get_all_stations()
+    cities = set()
+    for station in all_stations:
+        if station["city"]: cities |= {station["city"]["name"]}
+    return sorted(list(cities))
 
 
 def get_stations(city_name):
+    all_stations = get_all_stations()
     stations_id = []
     for chunk in all_stations:
         if chunk["city"] and chunk["city"]["name"].lower() == city_name.lower():
